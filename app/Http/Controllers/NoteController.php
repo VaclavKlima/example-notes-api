@@ -23,7 +23,6 @@ class NoteController extends Controller
             ],
         ]);
 
-
         return NoteResource::collection(
             resource: Note::query()
                 ->when(

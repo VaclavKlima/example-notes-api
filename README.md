@@ -1,61 +1,112 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# EXAMPLE NOTES API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+### Installation
 
-## About Laravel
+1. Clone the repository:
+   ```bash
+   gh repo clone VaclavKlima/example-notes-api
+    ``` 
+   On local machine, use Laravel <a href="https://herd.laravel.com/">Laravel Herd</a> or Valet for development.
+2. Create .env file:
+   ```bash
+   cp .env.example .env
+   ```
+3. Create schema in the database and fill the `.env` file with the database connection details.
+4. Install composer dependencies:
+   ```bash
+   composer install
+   ```
+5. Run migrations:
+   ```bash
+    php artisan migrate
+    ```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Rest API
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Get all notes**: `GET /api/notes?priority={priority}`
+  - `priority` is optional and can be used to filter notes by priority (e.g., `high`, `medium`, `low`, `urgent`).
+- Returns:
+  ```json
+    {
+      "data": [
+        {
+          "id": 2,
+          "title": "Simple note",
+          "description": "Description",
+          "priority": "low",
+          "created_at": "2025-07-06T12:11:34.000000Z",
+          "updated_at": "2025-07-06T12:11:34.000000Z"
+        }, {
+          ...        
+        } 
+      ]
+    }
+  ```
+- **Get a note by ID**: `GET /api/notes/{id}`
+  - Returns a single note by its ID.
+  - Example response:
+  ```json
+    {
+      "data": {
+          "id": 1,
+          "title": "Simple note",
+          "description": "Description",
+          "priority": "high",
+          "created_at": "2025-07-06T12:11:31.000000Z",
+          "updated_at": "2025-07-06T12:13:39.000000Z"
+      }
+    }
+  ```
+- **Create a new note**: `POST /api/notes`
+  - Request body should contain `title`, `content`, and `priority`.
+  - Example:
+    ```json
+    {
+      "title": "Note Title", // Required, max 255 characters
+      "content": "Note content goes here.", // Required, text content
+      "priority": "high" // Required, one of: high, medium, low, urgent
+    }
+    ```
+    - Returns the created note with a 201 status code.
+    - Example response:
+    ```json
+    {
+      "data": {
+          "id": 1,
+          "title": "Note Title",
+          "description": "Note content goes here.",
+          "priority": "high",
+          "created_at": "2025-07-06T12:11:31.000000Z",
+          "updated_at": "2025-07-06T12:13:39.000000Z"
+      }
+    }
+    ```
+- **Update a note**: `PUT /api/notes/{id}`
+  - Request body should contain `title`, `content`, and `priority`.
+  - Example:
+    ```json
+    {
+      "title": "Updated Note Title", // Required, max 255 characters
+      "content": "Updated note content.", // Required, text content
+      "priority": "medium" // Required, one of: high, medium, low, urgent
+    }
+    ```
+    - Returns the updated note with a 200 status code.
+    - Example response:
+    ```json
+    {
+      "data": {
+          "id": 1,
+          "title": "Updated Note Title",
+          "description": "Updated note content.",
+          "priority": "medium",
+          "created_at": "2025-07-06T12:11:31.000000Z",
+          "updated_at": "2025-07-06T12:13:39.000000Z"
+      }
+    }
+    ```
+# What were your key design choices and why?
+- **Notes priority as Enum**: I used an enum for the priority field to ensure that only valid values are stored in the database. This helps maintain data integrity and makes it easier to handle priority-related logic in the application.
+- **Validation rules**: I implemented validation rules for the request data to ensure that the required fields are present and that the data types are correct. This helps prevent errors and ensures that the API behaves as expected.
+- **Laravel**: I chose Laravel for its robust features, ease of use. It provides a solid foundation for building RESTful APIs with built-in support for routing, validation, and database interactions.
+- **Resource responses**: I used resource responses to format the API responses consistently. This makes it easier to handle the responses on the client side and ensures that the API adheres to a standard structure.
